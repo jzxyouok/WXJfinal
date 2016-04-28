@@ -1,0 +1,24 @@
+package ${package};
+
+import me.a186.mvc.base.BaseModel;
+import com.jfinal.plugin.activerecord.IBean;
+
+<% for(dataType in dataTypes){ %>
+import ${dataType};
+<% } %>
+
+/**
+*${columnList[0].table_desc} model
+* Created by Punk
+*/
+public class Base${className}<M extends Base${className}<M>> extends BaseModel<M> implements IBean{
+
+    <% for(column in columnList){ %>
+    public void set${column.column_name_upperCaseFirstOne}(${column.column_className} ${column.column_name}){
+    set("${column.column_name}", ${column.column_name});
+    }
+    public ${column.column_className} get${column.column_name_upperCaseFirstOne}() {
+    return get("${column.column_name}");
+    }
+    <% } %>
+}

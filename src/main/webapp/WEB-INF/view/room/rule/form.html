@@ -1,0 +1,65 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label">${i18nMap["admin.modules.name"]}</label>
+
+    <div class="col-sm-7">
+        <input type="hidden" id="mids" name="authRule.mids" value="${escapeXml(rule.mids!)}">
+        <input type="text" id="mName" name="authRule.mName" value="${escapeXml(rule.mName!)}" class="form-control parsley-validated"  data-required="true" readonly="readonly">
+    </div>
+    <div class="input-group-btn">
+        <button type="button" data-url="/jf/room/modules/toUrl"
+                data-param='{"toUrl":"/room/modules/radio.html", "ids" : "${escapeXml(rule.mids!)}", "mids" : "mids", "mName" : "mName" }'
+                class="btn btn-success ajax-dialog">
+            ${i18nMap["admin.common.choice"]}
+        </button>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.rule.title"]}</label>
+
+    <div class="col-md-7 col-sm-6">
+        <input class="form-control parsley-validated" type="text" name="authRule.title"
+               data-required="true" value="${escapeXml(rule.title!)}">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">${i18nMap["admin.rule.name"]}</label>
+
+    <div class="col-sm-7">
+        <input class="form-control parsley-validated" type="text" name="authRule.name"
+               data-required="true" value="${escapeXml(rule.name!)}">
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.rule.type"]}</label>
+
+    <div class="col-md-7 col-sm-6">
+        <select name="authRule.type" class="form-control">
+            <option value="1" ${rule.type! == "1" ? "selected='selected'":"" }>url</option>
+            <option value="2" ${rule.type! == "2" ? "selected='selected'":"" }>菜单</option>
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.rule.permission"]}</label>
+
+    <div class="col-md-7 col-sm-6">
+        <select name="authRule.permission" class="form-control">
+            <option value="1" ${rule.permission! == "1" ? "selected='selected'":"" }>是</option>
+            <option value="2" ${rule.permission! == "2" ? "selected='selected'":"" }>否</option>
+        </select>
+    </div>
+</div>
+
+<input type="hidden" name="authRule.ids" value="${rule.ids!}">
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        hi.hiParsley();
+    });
+</script>

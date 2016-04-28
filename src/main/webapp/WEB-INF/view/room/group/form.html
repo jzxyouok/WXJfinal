@@ -1,0 +1,17 @@
+<div class="form-group">
+    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.group.title"]}</label>
+
+    <div class="col-md-7 col-sm-6">
+        <input class="form-control parsley-validated" type="text" name="authGroup.title"
+               data-required="true" value="${escapeXml(authGroup.title!)}">
+    </div>
+</div>
+
+<input type="hidden" name="authGroup.ids" value="${authGroup.ids!}">
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        hi.hiParsley();
+    });
+</script>

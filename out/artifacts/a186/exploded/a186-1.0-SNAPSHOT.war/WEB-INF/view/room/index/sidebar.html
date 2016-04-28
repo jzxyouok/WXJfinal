@@ -1,0 +1,48 @@
+<div id="sidebar" class="sidebar">
+    <!-- begin sidebar scrollbar -->
+    <div data-scrollbar="true" data-height="100%">
+        <!-- begin sidebar user -->
+        <ul class="nav">
+            <li class="nav-profile">
+                <div class="image">
+                    <a href="javascript:;"><img src="${cxt!}/ui/color/assets/img/user-11.jpg" alt=""/></a>
+                </div>
+                <div class="info">
+                    ${escapeXml(cookieMap.userName.value!)}
+                    <small></small>
+                </div>
+            </li>
+        </ul>
+        <!-- end sidebar user -->
+        <!-- begin sidebar nav -->
+        <ul id="sidebar_nav" class="nav">
+            <li class="nav-header">Navigation</li>
+            <% for(one in menuList){ %>
+            <% if(isEmpty(one.subList) == false){ %>
+            <li class="has-sub">
+                <a href="javascript:;">
+                    <i class="fa fa-file-o"></i>
+                    <b class="caret pull-right"></b>
+                    <span>${one.names }</span>
+                </a>
+                <ul class="sub-menu">
+                    <% for(two in one.subList){ %>
+                    <% if(strutil.contain(two.url,".html") == false){ %>
+                    <li><a href="${two.url!}" class="ajaxMainPanel">${two.names!}</a></li>
+                    <% }else{ %>
+                    <li><a href="/jf/platform/index/toUrl?toUrl=${two.url!}" class="ajaxMainPanel">${two.names!}</a></li>
+                    <% } %>
+                    <% } %>
+                </ul>
+            </li>
+            <% } %>
+            <% } %>
+            <!-- begin sidebar minify button -->
+            <li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i
+                    class="fa fa-angle-double-left"></i></a></li>
+            <!-- end sidebar minify button -->
+        </ul>
+        <!-- end sidebar nav -->
+    </div>
+    <!-- end sidebar scrollbar -->
+</div>

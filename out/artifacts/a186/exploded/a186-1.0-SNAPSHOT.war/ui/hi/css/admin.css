@@ -1,0 +1,15 @@
+.right {
+    float: right;
+}
+
+.dataTables_filter label {
+    margin-left: 5px;
+}
+
+.dataTables_filter select {
+    border-color: #edf0f5;
+    height: 34px;
+    margin-left: 10px;
+    width: 75px;
+    background: #edf0f5;
+}

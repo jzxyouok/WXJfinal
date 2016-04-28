@@ -1,0 +1,307 @@
+<script type="text/javascript">
+
+    var zTree;
+
+    var setting = {
+        async: {
+            enable: true,
+            url: '${cxt!}/jf/room/rule/treeData',
+            autoParam: ["id=moduleIds"],//, "name=n", "level=lv"
+            otherParam: {"ids": '${paramMap["ids"]!}'},
+            dataFilter: filter,
+            type: "post"
+        },
+        view: {
+            fontCss: getFont,
+            expandSpeed: "",
+            selectedMulti: false
+        },
+        check: {
+            enable: true,
+            chkStyle: "checkbox"
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            beforeAsync: beforeAsync,	//用于捕获异步加载之前的事件回调函数,zTree 根据返回值确定是否允许进行异步加载
+            onAsyncSuccess: onAsyncSuccess,	//用于捕获异步加载出现异常错误的事件回调函数
+            onAsyncError: onAsyncError,	//用于捕获异步加载正常结束的事件回调函数
+
+            beforeCheck: beforeCheck,
+            onCheck: onCheck
+        }
+    };
+
+    //节点数据过滤+默认选中
+    var moduleIds = 'init';
+    var ruleIds = '';
+    function filter(treeId, parentNode, childNodes) {
+        if (moduleIds == 'init') {
+            getCheckedByGroup();
+        }
+        if (!childNodes) {
+            return null;
+        }
+        var childNode;
+        var childNodeId;
+        var childNodeName;
+        for (var i = 0, l = childNodes.length; i < l; i++) {
+            childNode = childNodes[i];
+            childNodeId = childNode.id;
+            childNodeName = childNode.name;
+
+            childNode.name = childNodeName.replace(/\.n/g, '.');
+
+            if (moduleIds.indexOf(childNodeId + ',') != -1) {
+                zTree.checkNode(childNode, true, false, false);
+            } else if (ruleIds.indexOf(childNodeId + ',') != -1) {
+                zTree.checkNode(childNode, true, false, false);
+            }
+        }
+        return childNodes;
+    }
+
+    //////////////////选中事件处理////////////////////
+    var className = "dark", checkedModuleNodeIds = "", checkedRuleNodeIds = "";
+
+    function getCheckedByGroup() {
+        var url = "/jf/room/group/getRule";
+        var data = {"ids": '${paramMap["ids"]!}'};
+        var reData = $.hiajax.ajaxFunc(url, data, "json");
+        if (reData != "error") {
+            moduleIds = (reData.modulesIds == null ? '' : reData.modulesIds);
+            ruleIds = (reData.ruleIds == null ? '' : reData.ruleIds);
+
+            checkedModuleNodeIds = moduleIds;
+            checkedRuleNodeIds = ruleIds;
+        } else {
+            hi.himan("获取角色拥有得功能失败！");
+        }
+    }
+
+    function onCheck(e, treeId, treeNode) {
+        var treeNodeId = treeNode.id;
+        var checked = treeNode.checked;
+        var id = treeNode.id + ",";
+
+        var isParent = treeNode.isParent;
+        if (isParent) {
+            if (checked && checkedModuleNodeIds.indexOf(id) == -1) {
+                checkedModuleNodeIds += id;
+            } else {
+                checkedModuleNodeIds = checkedModuleNodeIds.replace(id, "");
+            }
+        } else {
+            if (checked && checkedRuleNodeIds.indexOf(id) == -1) {
+                checkedRuleNodeIds += id;
+            } else {
+                checkedRuleNodeIds = checkedRuleNodeIds.replace(id, "");
+            }
+        }
+//        zTree.updateNode(treeNode);
+        parentChecked(treeNode.getParentNode(), checked);
+        childrenCheck(treeNode.children, checked);
+//        console.log(checkedModuleNodeIds);
+    }
+
+
+    function beforeCheck(treeId, treeNode) {
+        className = (className === "dark" ? "" : "dark");
+        return (treeNode.doCheck !== false);
+    }
+
+    //字体设置
+    function getFont(treeId, node) {
+        return node.font ? node.font : {};
+    }
+
+
+    ////////////////////下面是处理展开//////////////////
+    var curStatus = "init", curAsyncCount = 0, asyncForAll = false, goAsync = false;
+
+    //用于捕获异步加载之前的事件回调函数,zTree 根据返回值确定是否允许进行异步加载
+    function beforeAsync() {
+        curAsyncCount++;
+    }
+
+    //用于捕获异步加载出现异常错误的事件回调函数
+    function onAsyncSuccess(event, treeId, treeNode, msg) {
+        curAsyncCount--;
+        if (curStatus == "expand") {
+            expandNodes(treeNode.children);
+        } else if (curStatus == "async") {
+            asyncNodes(treeNode.children);
+        }
+
+        if (curAsyncCount <= 0) {
+            if (curStatus != "init" && curStatus != "") {
+                asyncForAll = true;
+            }
+            curStatus = "";
+        }
+    }
+
+    //用于捕获异步加载正常结束的事件回调函数
+    function onAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+        curAsyncCount--;
+
+        if (curAsyncCount <= 0) {
+            curStatus = "";
+            if (treeNode != null) asyncForAll = true;
+        }
+    }
+
+
+    ///////////////其他函数///////////////////////
+    function expandNodes(nodes) {
+        if (!nodes) {
+            return;
+        }
+        curStatus = "expand";
+        var zTree = $.fn.zTree.getZTreeObj("zTreeContent");
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            zTree.expandNode(nodes[i], true, false, false);
+            if (nodes[i].isParent && nodes[i].zAsync) {
+                expandNodes(nodes[i].children);
+            } else {
+                goAsync = true;
+            }
+        }
+    }
+
+    function asyncNodes(nodes) {
+        if (!nodes) {
+            return;
+        }
+        curStatus = "async";
+        var zTree = $.fn.zTree.getZTreeObj("zTreeContent");
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            if (nodes[i].isParent && nodes[i].zAsync) {
+                asyncNodes(nodes[i].children);
+            } else {
+                goAsync = true;
+                zTree.reAsyncChildNodes(nodes[i], "refresh", true);
+            }
+        }
+    }
+
+    function setCheckValue() {
+        if (ruleIds != checkedRuleNodeIds || moduleIds != checkedModuleNodeIds) {
+            var url = "/jf/room/group/setRuleAndModules";
+            var data = {
+                "ids": "${paramMap.ids!}",
+                "ruleIds": checkedRuleNodeIds,
+                "moduleIds": checkedModuleNodeIds
+            };
+            var reData = $.hiajax.ajaxFunc(url, data);
+            if (reData != "${paramMap.ids!}") {
+                hi.himan("设置角色拥有的功能失败！");
+            }
+        }
+    }
+
+    function parentChecked(parentNode, checked) {
+        if (parentNode == null) {
+            return;
+        }
+        var id = parentNode.id + ",";
+        if (checked) {
+            if (checkedModuleNodeIds.indexOf(id) == -1) {
+                checkedModuleNodeIds += id;
+            }
+        } else {
+            var childrenNodes = parentNode.children;
+            var length = childrenNodes.length;
+            var checkedCount = 0;
+            for (var i = 0; i < length; i++) {
+                var treeNode = childrenNodes[i];
+                var checked = treeNode.checked;
+                if (checked) {
+                    checkedCount += 1;
+                }
+            }
+            if (checkedCount == 0) {
+                checkedModuleNodeIds = checkedModuleNodeIds.replace(id, "");
+            }
+        }
+        parentChecked(parentNode.getParentNode(), checked);
+    }
+
+    function childrenCheck(nodes, checked) {
+        if (!nodes) {
+            return;
+        }
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            var treeNode = nodes[i];
+            var treeNodeId = treeNode.id;
+            var id = treeNodeId + ",";
+            var isParent = treeNode.isParent;
+            if (isParent) {
+                if (checked && checkedModuleNodeIds.indexOf(id) == -1) {
+                    checkedModuleNodeIds += id;
+                } else {
+                    checkedModuleNodeIds = checkedModuleNodeIds.replace(id, "");
+                }
+            } else {
+                if (checked && checkedRuleNodeIds.indexOf(id) == -1) {
+                    checkedRuleNodeIds += id;
+                } else {
+                    checkedRuleNodeIds = checkedRuleNodeIds.replace(id, "");
+                }
+            }
+
+            childrenCheck(treeNode.children, checked);
+        }
+    }
+
+    //////////////////初始化////////////////////
+
+    $(document).ready(function () {
+        zTree = $.fn.zTree.init($("#zTreeContent"), setting);
+    });
+
+    setTimeout(function () {
+        expandAll();
+    }, 500);
+
+    function expandAll() {
+        if (!check()) {
+            return;
+        }
+        zTree = $.fn.zTree.getZTreeObj("zTreeContent");
+        if (asyncForAll) {
+            zTree.expandAll(true);
+        } else {
+            expandNodes(zTree.getNodes());
+            if (!goAsync) {
+                curStatus = "";
+            }
+        }
+    }
+
+    function check() {
+        if (curAsyncCount > 0) {
+            return false;
+        }
+        return true;
+    }
+</script>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">${i18nMap["admin.group.ruleTree"]}</h4>
+        </div>
+        <div class="modal-body">
+            <ul id="zTreeContent" class="ztree"></ul>
+        </div>
+        <div class="modal-footer">
+            <a href="javascript:;" class="btn btn-sm btn-white"
+               data-dismiss="modal">${i18nMap["admin.common.close"]}</a>
+            <a data-dismiss="modal" href="javascript:;" class="btn btn-sm btn-success" onclick="setCheckValue()">${i18nMap["admin.common.determine"]}</a>
+        </div>
+    </div>
+</div>

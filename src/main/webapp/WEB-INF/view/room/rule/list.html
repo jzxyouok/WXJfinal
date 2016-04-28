@@ -1,0 +1,150 @@
+<!-- begin breadcrumb -->
+<ol class="breadcrumb pull-right">
+    <li><a href="/jf/room/index" class="ajax">${i18nMap["admin.common.mainPage"]}</a>
+    </li>
+    <li class="active">${i18nMap["admin.rule"]}</li>
+</ol>
+<!-- end breadcrumb -->
+
+<!-- begin row -->
+<div class="row">
+    <!-- begin col-12 -->
+    <div class="col-md-12 ui-sortable">
+        <!-- begin panel -->
+        <div class="panel panel-inverse">
+            <% include("/common/panel-tools.html"){}%>
+            <div class="panel-body">
+                <form id="splitPage" class="ajax-form" action="${cxt!}/jf/room/rule">
+                    <div class="row hi-select">
+                        <div class="col-md-2 ui-sortable">
+                            <div class="form-group">
+                                <label>${i18nMap["admin.rule.title"]}</label>
+                                <input type="text" name="_query.title"
+                                       value='${escapeXml(paramMap["_query.title"])}'
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4 ui-sortable">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary m-r-5 m-b-5 m-t-20">
+                                    ${i18nMap["admin.common.select"]}
+                                </button>
+                                <button type="reset" class="btn btn-default m-r-5 m-b-5 m-t-20">
+                                    ${i18nMap["admin.common.reset"]}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%
+                    var edit = authUrl("/jf/room/rule/edit");
+                    var delete = authUrl("/jf/room/rule/delete");
+                    %>
+
+                    <div class="table-responsive">
+                        <div id="data-table_wrapper" class="dataTables_wrapper form-inline" role="grid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <% if(authUrl("/room/rule/add.html")){ %>
+                                    <a href="/jf/room/rule/toUrl?toUrl=/room/rule/add.html"
+                                       class="btn btn-success m-l-10 m-r-5 m-b-5 ajax">
+                                        ${i18nMap["admin.rule.add"]} <i class="fa fa-plus m-l-5"></i>
+                                    </a>
+                                    <% } %>
+                                    <% if(delete == true){ %>
+                                    <button type="button" data-url="/jf/room/rule/delete"
+                                            class="btn btn-danger m-l-10 m-r-5 m-b-5 table-delete-all">
+                                        ${i18nMap["admin.common.delete"]} <i class="fa fa-trash-o m-l-5"></i>
+                                    </button>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <table id="data-table" class="table table-striped table-bordered dataTable"
+                                   aria-describedby="data-table_info">
+                                <thead>
+                                <tr role="row">
+                                    <th class="hidden-xs">
+                                        <input type="checkbox" name="checkAll" class="table-check-all">
+                                    </th>
+                                    <th class="${orderBy('a.title')} table-order" orderby="a.title">
+                                        ${i18nMap["admin.rule.title"]}
+                                    </th>
+                                    <th class="${orderBy('a.name')} table-order" orderby="a.name">
+                                        ${i18nMap["admin.rule.name"]}
+                                    </th>
+                                    <th class="${orderBy('modulesName')} table-order" orderby="modulesName">
+                                        ${i18nMap["admin.modules.name"]}
+                                    </th>
+                                    <th class="${orderBy('permission')} table-order" orderby="permission">
+                                        ${i18nMap["admin.rule.permission"]}
+                                    </th>
+                                    <th class="${orderBy('type')} table-order" orderby="type">
+                                        ${i18nMap["admin.rule.type"]}
+                                    </th>
+                                    <th class="hidden-xs">
+                                        ${i18nMap["admin.common.operation"]}
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                <% for(rule in splitPage.list){ %>
+                                <tr class="gradeA odd">
+                                    <td>
+                                        <input type="checkbox" name="checkIds" value="${rule.ids!}">
+                                    </td>
+                                    <td>
+                                        ${escapeXml(rule["title"])}
+                                    </td>
+                                    <td>
+                                        ${escapeXml(rule["name"])}
+                                    </td>
+                                    <td>
+                                        ${escapeXml(rule["modulesName"])}
+                                    </td>
+                                    <td>
+                                        <% if(rule["permission"] == "2"){ %>
+                                        ${i18nMap["admin.common.no"]}
+                                        <% }else{ %>
+                                        ${i18nMap["admin.common.yes"]}
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if(rule["type"] == "2"){ %>
+                                        菜单
+                                        <% }else{ %>
+                                        URL
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if(edit == true){ %>
+                                        <a href="/jf/room/rule/edit/${rule.ids!}"
+                                           class="btn btn-info hi-table-btn ajax">
+                                            ${i18nMap["admin.common.edit"]}<i class="fa fa-edit"></i>
+                                        </a>
+                                        <% } %>
+                                        <% if(delete == true){ %>
+                                        <a href="/jf/room/rule/delete/${rule.ids!}"
+                                           class="btn btn-danger hi-table-btn ajax confirm">
+                                            ${i18nMap["admin.common.delete"]} <i class="fa fa-trash-o m-l-5"></i>
+                                        </a>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                </tbody>
+                            </table>
+                            <div class="row" id="splitPageDiv">
+                                <% include("/common/splitPage.html", {"divId" : "mainPanel", "formId"
+                                :"splitPage","splitPageDiv" : "splitPageDiv"}){} %>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- end panel -->
+    </div>
+    <!-- end col-12 -->
+</div>
+<!-- end row -->

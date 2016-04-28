@@ -1,0 +1,10 @@
+.hi-paging{
+    float: right;
+    width:auto;
+}
+.hi-table-btn{
+    padding: 1px 6px;
+}
+.hi-paging-select select{
+    width: auto !important;
+}

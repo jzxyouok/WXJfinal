@@ -1,0 +1,34 @@
+<!-- begin breadcrumb -->
+<ol class="breadcrumb pull-right">
+    <li><a href="/jf/room/index" class="ajax">${i18nMap["admin.common.mainPage"]}</a>
+    </li>
+    <li><a href="/jf/room/modules" class="ajax">${i18nMap["admin.modules"]}</a>
+    </li>
+    <li class="active">${i18nMap["admin.modules.edit"]}</li>
+</ol>
+<!-- end breadcrumb -->
+<div class="row">
+    <!-- begin col-6 -->
+    <div class="col-md-12 ui-sortable">
+        <!-- begin panel -->
+        <div class="panel panel-inverse">
+            <% include("/common/panel-tools.html"){}%>
+            <div class="panel-body">
+                <form action="${cxt!}/jf/room/modules/update" method="post" class="form-horizontal"  data-validate="parsley">
+                    <% include("/room/modules/form.html"){} %>
+
+                    <div class="form-group">
+
+                        <div class="col-md-8 col-md-offset-5 ui-sortable">
+                            <button type="submit"  class="btn btn-primary m-r-5">
+                                <i class="fa fa-check"></i> ${i18nMap["admin.common.submit"]}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- end panel -->
+    </div>
+    <!-- end col-6 -->
+</div>

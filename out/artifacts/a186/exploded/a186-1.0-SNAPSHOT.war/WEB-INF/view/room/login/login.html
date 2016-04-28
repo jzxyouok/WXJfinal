@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+    <title>A186 | Login Page</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+
+    <!-- ================== BEGIN BASE CSS STYLE ================== -->
+
+    <link href="${cxt!}/ui/color/assets/plugins/jquery-ui-1.10.4/themes/base/minified/jquery-ui.min.css"
+          rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/plugins/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/plugins/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/css/animate.min.css" rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/css/style.css" rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/css/style-responsive.css" rel="stylesheet"/>
+    <link href="${cxt!}/ui/color/assets/plugins/gritter/css/jquery.gritter.css" rel="stylesheet"/>
+    <!-- ================== END BASE CSS STYLE ================== -->
+</head>
+<body>
+<!-- begin #page-loader -->
+<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+<!-- end #page-loader -->
+
+<!-- begin #page-container -->
+<div id="page-container" class="fade">
+    <!-- begin login -->
+    <div class="login bg-black animated fadeInDown">
+        <!-- begin brand -->
+        <div class="login-header">
+            <div class="brand">
+                <span class="logo"></span>A186
+                <small>认真思考 坚持学习</small>
+            </div>
+            <div class="icon">
+                <i class="fa fa-sign-in"></i>
+            </div>
+        </div>
+        <!-- end brand -->
+        <div class="login-content">
+            <form action="${cxt!}/jf/room/login/vali" method="POST" class="margin-bottom-0">
+                <div class="form-group m-b-20">
+                    <input type="text" id="username" class="form-control input-lg" placeholder="用户名"/>
+                </div>
+                <div class="form-group m-b-20">
+                    <input type="password" id="password" class="form-control input-lg" placeholder="密码"/>
+                </div>
+                <label class="checkbox m-b-20">
+                    <input id="remember" type="checkbox"/> 记住
+                </label>
+
+                <div class="login-buttons">
+                    <button type="submit" class="btn btn-success btn-block btn-lg">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- end login -->
+</div>
+<!-- end page container -->
+
+<!-- ================== BEGIN BASE JS ================== -->
+<script src="${cxt!}/ui/color/assets/plugins/jquery-1.8.2/jquery-1.8.2.min.js"></script>
+<script src="${cxt!}/ui/color/assets/plugins/jquery-ui-1.10.4/ui/minified/jquery-ui.min.js"></script>
+<script src="${cxt!}/ui/color/assets/plugins/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+<!--[if lt IE 9]>
+<script src="${cxt!}/ui/color/assets/crossbrowserjs/html5shiv.js"></script>
+<script src="${cxt!}/ui/color/assets/crossbrowserjs/respond.min.js"></script>
+<script src="${cxt!}/ui/color/assets/crossbrowserjs/excanvas.min.js"></script>
+<![endif]-->
+<script src="${cxt!}/ui/color/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<!-- ================== END BASE JS ================== -->
+
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<script src="${cxt!}/ui/color/assets/js/apps.min.js"></script>
+<script src="${cxt!}/ui/color/assets/plugins/gritter/js/jquery.gritter.js"></script>
+<script src="${cxt!}/ui/hi/js/base.js"></script>
+<!-- ================== END PAGE LEVEL JS ================== -->
+
+<script>
+    $(document).ready(function () {
+        App.init();
+        $(".login-buttons").click(function (e) {
+            e.preventDefault();
+            var name = $("#username").val().trim();
+            var password = $("#password").val().trim();
+            var remember = $("#remember").prop("checked");
+            if (name == "" || password == "") {
+                hi.himan("呵呵", "别乱点！");
+                return false;
+            }
+            $.post("/jf/room/login/vali", {username: name, password: password, remember: remember}, function (data) {
+                if (data == 0) {
+                    hi.himan("提示", "用户不存在");
+                } else if (data == 1) {
+                    hi.himan("提示", "用户已停用");
+                } else if (data == 2) {
+                    hi.himan("提示", "密码错误次数超限");
+                } else if (data == 3) {
+                    hi.himan("提示", "密码验证成功");
+                    window.location.href = "/jf/room/index";
+                } else if (data == 4) {
+                    hi.himan("提示", "密码验证失败");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

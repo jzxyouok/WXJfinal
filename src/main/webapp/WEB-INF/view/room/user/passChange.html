@@ -1,0 +1,78 @@
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $('#passChangeForm').each(function () {
+            $(this).parsley();
+            $(this).on("submit", function (e) {
+                e.preventDefault();
+                if (hi.hiCheck(this)) {
+                    var newPass1 = $("#newPass1").val().trim();
+                    var newPass2 = $("#newPass2").val().trim();
+                    if (newPass1 != newPass2) {
+                        hi.himan("两次输入密码不一致，请从新输入！");
+                        return false;
+                    }
+
+                    var passOld = $("#passOld").val().trim();
+                    var target = $(this).get(0).action.replace(cxt, '');
+
+                    var data = {
+                        passOld: passOld,
+                        passNew: newPass1
+                    };
+                    var result = $.hiajax.ajaxFunc(target, data);
+                    if (result == "false") {
+                        hi.himan("原密码不正确！");
+                    } else {
+                        $("#passChangeModal").trigger("click");
+                    }
+                }
+            });
+        });
+    });
+</script>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">${i18nMap["admin.top.passChange"]}</h4>
+        </div>
+        <form id="passChangeForm" action="${cxt}/jf/room/user/passChange" method="post" class="form-horizontal"
+              data-validate="parsley">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.user.oldPass"]}</label>
+
+                    <div class="col-md-7 col-sm-6">
+                        <input class="form-control parsley-validated" id="passOld" type="password" name="passOld"
+                               data-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.user.password.1"]}</label>
+
+                    <div class="col-md-7 col-sm-6">
+                        <input class="form-control parsley-validated" id="newPass1" type="password" name="passNew"
+                               data-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label ui-sortable">${i18nMap["admin.user.password.2"]}</label>
+
+                    <div class="col-md-7 col-sm-6">
+                        <input class="form-control parsley-validated" id="newPass2" type="password"
+                               data-required="true">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:;" id="passChangeModal" class="btn btn-sm btn-white"
+                   data-dismiss="modal">${i18nMap["admin.common.close"]}</a>
+                <button type="submit" class="btn btn-sm btn-success">
+                    ${i18nMap["admin.common.determine"]}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

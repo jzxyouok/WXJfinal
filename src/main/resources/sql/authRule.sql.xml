@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql-statement namespace="authRule">
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageSelect">
+        <![CDATA[
+		SELECT a.ids,a.name,a.title,b.name AS modulesName,permission,type
+    	]]>
+    </sql>
+
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageFrom">
+        <![CDATA[
+        	FROM t_auth_rule AS a INNER JOIN t_modules as b ON a.mids=b.ids
+			WHERE 1=1
+			<% if(!isEmpty(name)){ %>
+					and u.title like #'%$name$%'#
+			<% } %>
+    	]]>
+    </sql>
+
+
+    <!-- 获取模块下面的功能 -->
+    <sql id="byModuleIds">
+        <![CDATA[
+        SELECT ids,title FROM t_auth_rule WHERE mids = ?
+    	]]>
+    </sql>
+</sql-statement>

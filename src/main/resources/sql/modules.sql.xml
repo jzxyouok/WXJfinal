@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql-statement namespace="modules">
+
+    <!-- 动态SQL处理 -->
+    <sql id="getParents">
+        <![CDATA[
+			select ids,name from t_modules where pids is null
+    	]]>
+    </sql>
+
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageSelect">
+        <![CDATA[
+			SELECT a.ids,a.name,a.title,a.pids,b.name as parentName
+    	]]>
+    </sql>
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageFrom">
+        <![CDATA[
+			 FROM t_modules AS a LEFT JOIN t_modules AS b ON a.pids = b.ids
+			 where 1=1
+			 <% if(!isEmpty(name)){ %>
+					and a.name like #'%$name$%'#
+			<% } %>
+    	]]>
+    </sql>
+    <!-- 查询根节点 -->
+    <sql id="rootNode">
+        <![CDATA[
+        select * from t_modules where pids IS NULL order by ids asc
+    	]]>
+    </sql>
+    <!-- 根据上级节点id查询子模块信息 -->
+    <sql id="childNode">
+        <![CDATA[
+        	select * from t_modules where pids = ? order by ids asc
+    	]]>
+    </sql>
+
+    <!-- 查询用户拥有菜单列表 -->
+    <sql id="twoLevelMenu">
+        <![CDATA[
+         SELECT d.url,d.`name` FROM t_user AS a
+         INNER JOIN t_auth_group_access AS b ON a.ids=b.uid
+         INNER JOIN t_auth_group_modules AS c ON b.groupId=c.groupIds
+         INNER JOIN t_modules AS d ON c.modulesIds=d.ids
+         WHERE `level`=2
+         AND uid = ?
+         AND pids = ?
+         GROUP BY url
+         ORDER BY d.ids
+        ]]>
+    </sql>
+</sql-statement>

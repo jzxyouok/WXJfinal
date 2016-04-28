@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql-statement namespace="user">
+
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageSelect">
+        <![CDATA[
+        SELECT ids,username,status
+    	]]>
+    </sql>
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageFrom">
+        <![CDATA[
+        	FROM t_user where 1=1
+			<% if(!isEmpty(username)){ %>
+					and username like #'%$username$%'#
+			<% } %>
+    	]]>
+    </sql>
+
+    <!-- 根据用户名查询 -->
+    <sql id="selectByUserName">
+        <![CDATA[
+        	SELECT * FROM t_user WHERE username=?
+    	]]>
+    </sql>
+
+    <!-- 查询用户拥有权限 -->
+    <sql id="getAuthList">
+        <![CDATA[
+        	SELECT f.`name`
+        	FROM t_user AS a INNER JOIN t_auth_group_access AS b ON a.ids = b.uid
+        	INNER JOIN t_auth_group AS c ON b.groupId=c.ids
+        	INNER JOIN t_auth_group_rule AS e ON c.ids=e.groupIds
+        	INNER JOIN t_auth_rule AS f ON e.ruleIds=f.ids
+        	WHERE a.ids=?
+        	GROUP BY f.`name`
+    	]]>
+    </sql>
+</sql-statement>

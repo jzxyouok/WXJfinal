@@ -1,0 +1,19 @@
+package ${package};
+
+import com.jfinal.core.Controller;
+import com.jfinal.validate.Validator;
+
+public class ${className}Validator extends Validator {
+
+protected void validate(Controller controller) {
+    String actionKey = getActionKey();
+}
+
+protected void handleError(Controller controller) {
+controller.keepModel(${className}.class);
+
+String actionKey = getActionKey();
+
+}
+
+}

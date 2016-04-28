@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql-statement namespace="authGroup">
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageSelect">
+        <![CDATA[
+		SELECT ids,title
+    	]]>
+    </sql>
+
+    <!-- 动态SQL处理 -->
+    <sql id="splitPageFrom">
+        <![CDATA[
+        	FROM t_auth_group
+			WHERE 1=1
+			<% if(!isEmpty(title)){ %>
+					and title like #'%$title$%'#
+			<% } %>
+    	]]>
+    </sql>
+
+    <!-- 获取角色功能 -->
+    <sql id="getRule">
+        <![CDATA[
+        	SELECT ruleIds FROM t_auth_group_rule WHERE groupIds = ?
+    	]]>
+    </sql>
+
+    <!-- 获取角色模块 -->
+    <sql id="getModules">
+        <![CDATA[
+        	SELECT modulesIds FROM t_auth_group_modules WHERE groupIds =  ?
+    	]]>
+    </sql>
+
+    <!-- 删除角色功能 -->
+    <sql id="deleteRule">
+        <![CDATA[
+           DELETE FROM t_auth_group_rule WHERE groupIds=?
+    	]]>
+    </sql>
+
+    <!-- 删除角色模块 -->
+    <sql id="deleteModules">
+        <![CDATA[
+           DELETE FROM t_auth_group_modules WHERE groupIds=?
+    	]]>
+    </sql>
+
+    <!-- 查询所有角色 -->
+    <sql id="selectAll">
+        <![CDATA[
+           SELECT ids,title FROM t_auth_group WHERE `status` = 1
+    	]]>
+    </sql>
+
+    <!-- 查询用户拥有角色 -->
+    <sql id="selectByUser">
+        <![CDATA[
+          SELECT a.ids,title FROM t_auth_group AS a INNER JOIN t_auth_group_access  AS b ON a.ids=b.groupId
+          WHERE `status` = 1 AND uid = ?
+    	]]>
+    </sql>
+
+    <!-- 查询用户拥有角色 -->
+    <sql id="deleteByUser">
+        <![CDATA[
+          DELETE FROM t_auth_group_access WHERE uid = ?
+    	]]>
+    </sql>
+</sql-statement>

@@ -1,0 +1,57 @@
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        var dual = $('select[name="duallistbox[]"]');
+        var dualListBox = dual.bootstrapDualListbox({
+            filterTextClear: '显示全部',
+            moveAllLabel: '选择全部',
+            removeAllLabel: '移除全部',
+            infoText: '共 {0} 条数据',
+            infoTextFiltered: '<span class="label label-warning">过滤</span> {0} 到 {1} 条数据',
+            infoTextEmpty: '空'
+        });
+
+        $("#addGroup").click(function () {
+            var userIds = "${ids}";
+            var checkedGroup = $('[name="duallistbox[]"]').val();
+            var groupIds = "";
+            if (checkedGroup != null) {
+                for (var i = 0; i < checkedGroup.length; i++) {
+                    groupIds += checkedGroup[i] + ",";
+                }
+            }
+            var data = {
+                ids: userIds,
+                groupIds: groupIds
+            };
+            var url = "/jf/room/user/setGroup";
+            $.hiajax.ajaxFunc(url, data);
+            $("#close").trigger("click");
+        });
+    });
+</script>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">${i18nMap["admin.user.group.select"]}</h4>
+        </div>
+        <div class="modal-body">
+            <select multiple="multiple" class="form-control" name="duallistbox[]" style="height: 191px;">
+                <% for(group in noCheckedList){ %>
+                <option value="${group.ids}">${group.title}</option>
+                <% } %>
+                <% for(group in checkedList){ %>
+                <option value="${group.ids}" selected="selected">${group.title}</option>
+                <% } %>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button id="close" class="btn btn-sm btn-white"
+                    data-dismiss="modal">${i18nMap["admin.common.close"]}
+            </button>
+            <button type="button" id="addGroup" class="btn btn-sm btn-success">
+                ${i18nMap["admin.common.determine"]}
+            </button>
+        </div>
+    </div>
+</div>

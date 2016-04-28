@@ -1,0 +1,36 @@
+group 'com.punkvv'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    //使用开源中国的maven源
+    maven {
+        url 'http://maven.oschina.net/content/groups/public/'
+    }
+}
+
+dependencies {
+    //编译jfinal源码依赖包
+    compile 'c3p0:c3p0:0.9.1.2',
+            'org.freemarker:freemarker:2.3.22',
+            'com.fasterxml.jackson.core:jackson-annotations:2.4.0',
+            'com.fasterxml.jackson.core:jackson-core:2.5.3',
+            'com.fasterxml.jackson.core:jackson-databind:2.4.3',
+            'org.apache.velocity:velocity:1.7',
+            'redis.clients:jedis:2.8.0',
+            'cglib:cglib:3.2.0',
+            'org.apache.commons:commons-pool2:2.2',
+            'com.jfinal:cos:26Dec2008',
+            'com.alibaba:druid:1.0.16',
+            'net.sf.ehcache:ehcache:2.10.0',
+            'log4j:log4j:1.2.17',
+            'javax.servlet:javax.servlet-api:3.1.0',
+            'com.alibaba:fastjson:1.2.7',
+            'de.ruedigermoeller:fst:2.40',
+            'javax.el:javax.el-api:3.0.0',
+            'javax.servlet.jsp:javax.servlet.jsp-api:2.3.1'
+
+}

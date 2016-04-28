@@ -1,0 +1,3 @@
+rootProject.name = 'a186'
+include 'jfinal'
+

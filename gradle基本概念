@@ -1,0 +1,86 @@
+（一）配置文件：
+    1.Gradle构建脚本（build.gradle）指定了一个项目和它的任务
+    2.Gradle属性文件（gradle.properties）用来配置构建属性
+    3.Gradle设置文件（gradle.settings）对于只有一个项目的构建而言是可选的，如果我们的构建中包含多于一个项目，那么它就是必须的，因为它描述了哪一个项目参与构建。
+      每一个多项目的构建都必须在项目结构的根目录中加入一个设置文件。
+
+（二）Gradle插件：
+    1.在项目中添加新任务
+    2.为新加入的任务提供默认配置，这个默认配置会在项目中注入新的约定（如源文件位置）
+    3.加入新的属性，可以覆盖插件的默认配置
+    4.为项目加入新的依赖
+    如在build.gradle文件中：
+      apply plugin ：'java'
+
+（三）java项目默认的目录结构：
+    1.src/main/java目录包含了项目的源代码
+    2.src/main/resources目录包含了项目的资源（如属性文件）
+    3.src/test/java目录包含了测试类
+    4.src/test/resources目录包含了测试资源。所有我们构建生成的文件都会在build目录下被创建
+    5.classes目录包含编译过的.class文件
+    6.libs目录包含构建生成的jar或war文件
+
+（四）java工程中的任务：
+    1.assemble任务会编译程序中的源代码，并打包生成Jar文件，这个任务不执行单元ces
+    2.build任务会执行一个完整的项目构建
+    3.clean任务会删除构建目录
+    4.compileJava任务会编译程序中的源代码
+
+
+
+
+（五）仓库管理：
+    在加入Maven仓库时，Gradle提供了三种“别名”供我们使用：
+    1.mavenCentral(),表示依赖是从Central Maven2仓库中获取的
+    2.jcenter(),表示依赖是从Bintary's Jcenter Maven仓库中获取的
+    3.mavenLocal(),表示依赖是从本地的Maven仓库中获取的
+    如：在build.gradle文件中加入
+        repositories{
+          mavenCentral()
+        }
+    4.使用Flat Directory仓库在build.gradle文件加入
+        repositories{
+          flatDir{
+            dirs 'lib1','lib2'
+          }
+        }
+        这意味着系统将在lib1和lib2目录下搜索依赖
+
+（六）依赖管理：
+    在Gradle中，依赖是按照指定的名称进行分类的，这些分类被称为配置项，我们可以使用配置项声明项目的外部依赖
+    1.当项目的源代码被编译时，compile配置项中的依赖是必须的
+    2.runtime配置项中包含的依赖在运行时是必须的
+    3.testCompile配置项中包含的依赖在编译项目的测试代码时是必须的
+    4.testRuntime配置项中包含的依赖在运行测试代码时是必须的
+    5.archives配置项中包含项目生成的文件（如war文件）
+    6.default配置项中包含运行时必须的依赖
+
+（七）声明项目依赖
+    1.group属性指定外部依赖的分组（在Maven中，就是groupId）
+    2.name属性指定外部依赖的名称（在Maven中，就是artifactId）
+    3.version属性指定外部依赖的版本（在Maven中，就是version）
+    如： 在build.gradle文件中加入
+       dependencies{
+          testCompile group: 'junit', name: 'junit', version: '4.11'
+         }
+    快捷方式声明依赖:[group]:[name]:[version]如：
+        dependencies{
+          compile 'junit:junit:4.11'
+        }
+    同一个配置项中加入多个依赖：
+        dependencies{
+          compile(
+             [group:'foo',name'foo',version:'0.1'],
+             [group:'bar',name:'bar',version:'0.1']
+          )
+        }
+    快捷方式：
+        dependencies{
+            compile 'foo:foo:0.1','bar:bar:0.1'
+        }
+
+
+
+
+
+
